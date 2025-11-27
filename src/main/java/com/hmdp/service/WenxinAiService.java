@@ -29,7 +29,7 @@ public class WenxinAiService {
 
     private final StringRedisTemplate redisTemplate;
 
-    @Value("${wenxin.api.key:}")
+    @Value("${wenxin.api.key:}")  
     private String apiKey;
 
 
