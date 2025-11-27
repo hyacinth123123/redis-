@@ -2,6 +2,7 @@ package com.hmdp.service;
 
 import com.hmdp.entity.BlogComments;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.springframework.scheduling.annotation.Async;
 
 /**
  * <p>
@@ -13,4 +14,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IBlogCommentsService extends IService<BlogComments> {
 
+    @Async
+    void analyzeCommentAsync(Long commentId, String content, Long shopId);
 }
