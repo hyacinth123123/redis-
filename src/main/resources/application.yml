@@ -25,3 +25,16 @@ mybatis-plus:
 logging:
   level:
     com.hmdp: debug
+
+# 大模型配置
+wenxin:
+  api:
+    key: # API Key
+    secret-key:
+    base-url: https://aip.baidubce.com  # 国内用户可使用代理地址
+app:
+  id: 165be30729b44982920396b5311e45ac
+# 跨域配置
+cors:
+  allowed-origins: http://localhost:8080,http://localhost:5173
+  # 完全禁用所有安全

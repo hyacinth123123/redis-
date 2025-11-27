@@ -24,7 +24,14 @@ public class MvcConfig implements WebMvcConfigurer {
                         "/upload/**",
                         "/blog/hot",
                         "/user/code",
-                        "/user/login"
+                        "/user/login",
+                        "/api/ai/**",           // AI相关接口
+                        "/test/**",             // 测试接口
+                        "/public/**",           // 公开接口
+                        "/emergency-test",      // 紧急测试
+                        "/root-test",           // 根测试
+                        "/root-echo"            // 根回显
+
 
                 ).order(1);
         //token刷新拦截器
