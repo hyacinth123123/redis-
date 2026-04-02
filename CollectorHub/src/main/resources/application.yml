@@ -1,0 +1,38 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: collectorhub
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/hmdp?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    username: root
+    password: StrongPassword123!
+  redis:
+    host: localhost
+    port: 6379
+    password: 123321
+    lettuce:
+      pool:
+        max-active: 10
+        max-idle: 10
+        min-idle: 1
+        time-between-eviction-runs: 10s
+  jackson:
+    default-property-inclusion: non_null # JSON处理时忽略非空字段
+mybatis-plus:
+  type-aliases-package: com.hmdp.entity # 别名扫描包
+logging:
+  level:
+    com.hmdp: debug
+
+# 大模型配置
+wenxin:
+  api:
+    key: 2cd04a34d7f14b568e7af5bcb31f01a8.0x7dDePfOYwu95uT # API Key
+    base-url: https://api.deepseek.com
+
+# 跨域配置
+cors:
+  allowed-origins: http://localhost:8080,http://localhost:5173
+  # 完全禁用所有安全
