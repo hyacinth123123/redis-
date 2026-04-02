@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusPulse AI助手</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px 20px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* 聊天样式 */
+        .chat-container {
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+
+        .message {
+            margin-bottom: 12px;
+            max-width: 80%;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            margin-left: auto;
+        }
+
+        .message.ai {
+            margin-right: auto;
+        }
+
+        .message-content {
+            padding: 10px 15px;
+            border-radius: 18px;
+            display: inline-block;
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .message.ai .message-content {
+            background: #f0f2f5;
+            color: #333;
+            border: 1px solid #eee;
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .chat-input button {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .chat-input button:hover {
+            transform: scale(1.05);
+        }
+
+        /* 评论分析样式 */
+        .analysis-form textarea {
+            width: 100%;
+            height: 120px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            resize: none;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .analysis-form button {
+            padding: 10px 20px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .analysis-result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+
+        .sentiment {
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .sentiment.positive { color: #28a745; }
+        .sentiment.negative { color: #dc3545; }
+        .sentiment.neutral { color: #6c757d; }
+
+        .feature-list {
+            margin: 8px 0;
+        }
+
+        .feature-list strong {
+            display: inline-block;
+            min-width: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- AI智能问答卡片 -->
+    <div class="card">
+        <div class="card-header">智能商铺助手</div>
+        <div class="card-body">
+            <div class="chat-container">
+                <div class="chat-messages" id="chat-messages">
+                    <div class="message ai">
+                        <div class="message-content">你好！我是CampusPulse智能助手，有什么可以帮你的吗？</div>
+                    </div>
+                </div>
+                <div class="chat-input">
+                    <input type="text" id="question-input" placeholder="例如：附近哪家咖啡店有自习区？">
+                    <button onclick="sendQuestion()">发送</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 评论分析卡片 -->
+    <div class="card">
+        <div class="card-header">评论情感分析</div>
+        <div class="card-body">
+            <div class="analysis-form">
+                <textarea id="comment-input" placeholder="请输入用户评论内容..."></textarea>
+                <button onclick="analyzeComment()">分析评论</button>
+
+                <div id="analysis-result" class="analysis-result" style="display: none;">
+                    <div id="sentiment" class="sentiment"></div>
+                    <div id="pros" class="feature-list"></div>
+                    <div id="cons" class="feature-list"></div>
+                    <div id="summary" style="margin-top: 10px; font-style: italic;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // API基础地址（根据你的后端实际地址修改）
+    const API_BASE_URL = 'http://localhost:8081/api/ai';
+
+    // 发送问题 - 适配现有的GET /qa接口
+function sendQuestion() {
+    const input = document.getElementById('question-input');
+    const question = input.value.trim();
+
+    if (!question) return;
+
+    // 添加用户消息
+    addMessage(question, 'user');
+    input.value = '';
+
+    // 调用现有的GET /qa接口
+    fetch(`${API_BASE_URL}/qa?question=${encodeURIComponent(question)}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP错误! 状态: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            // 适配您后端的Result格式
+            if (data.success) {
+                addMessage(data.data, 'ai');
+            } else {
+                addMessage('抱歉：' + data.errorMsg, 'ai');
+            }
+        })
+        .catch(error => {
+            console.error('请求失败:', error);
+            addMessage('连接失败: ' + error.message, 'ai');
+        });
+}
+
+
+    // 添加消息到聊天界面
+    function addMessage(content, type) {
+        const messagesContainer = document.getElementById('chat-messages');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${type}`;
+
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'message-content';
+        contentDiv.textContent = content;
+
+        messageDiv.appendChild(contentDiv);
+        messagesContainer.appendChild(messageDiv);
+
+        // 自动滚动到底部
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    // 分析评论
+function analyzeComment() {
+    const input = document.getElementById('comment-input');
+    const comment = input.value.trim();
+
+    if (!comment) return;
+
+    const resultDiv = document.getElementById('analysis-result');
+    resultDiv.style.display = 'block';
+    document.getElementById('sentiment').textContent = '分析中...';
+    document.getElementById('pros').textContent = '';
+    document.getElementById('cons').textContent = '';
+    document.getElementById('summary').textContent = '';
+
+    // 调用现有的评论分析接口
+    fetch(`${API_BASE_URL}/analysis/comment`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            shopId: 1,  // 默认店铺ID
+            comment: comment
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP错误! 状态: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            const result = data.data;
+
+            // 设置情感倾向
+            const sentimentEl = document.getElementById('sentiment');
+            sentimentEl.className = `sentiment ${result.sentiment}`;
+
+            const sentimentText = {
+                'positive': '😊 正面评价',
+                'negative': '😞 负面评价',
+                'neutral': '😐 中性评价'
+            }[result.sentiment] || '😐 中性评价';
+
+            sentimentEl.textContent = sentimentText;
+
+            // 设置优点
+            const prosEl = document.getElementById('pros');
+            if (result.pros && result.pros.length > 0) {
+                prosEl.innerHTML = `<strong>优点：</strong>${result.pros.join('、')}`;
+            } else {
+                prosEl.innerHTML = '<strong>优点：</strong>无';
+            }
+
+            // 设置缺点
+            const consEl = document.getElementById('cons');
+            if (result.cons && result.cons.length > 0) {
+                consEl.innerHTML = `<strong>缺点：</strong>${result.cons.join('、')}`;
+            } else {
+                consEl.innerHTML = '<strong>缺点：</strong>无';
+            }
+
+            // 设置总结
+            document.getElementById('summary').textContent = result.summary || '';
+        } else {
+            document.getElementById('sentiment').textContent = '分析失败：' + data.errorMsg;
+        }
+    })
+    .catch(error => {
+        console.error('分析失败:', error);
+        document.getElementById('sentiment').textContent = '分析失败: ' + error.message;
+    });
+}
+    // 回车键发送
+    document.getElementById('question-input').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') sendQuestion();
+    });
+</script>
+</body>
+</html>

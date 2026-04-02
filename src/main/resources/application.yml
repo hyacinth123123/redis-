@@ -1,0 +1,40 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: hmdp
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/hmdp?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    username: root
+    password: StrongPassword123!
+  redis:
+    host: localhost
+    port: 6379
+    password: 123321
+    lettuce:
+      pool:
+        max-active: 10
+        max-idle: 10
+        min-idle: 1
+        time-between-eviction-runs: 10s
+  jackson:
+    default-property-inclusion: non_null # JSON处理时忽略非空字段
+mybatis-plus:
+  type-aliases-package: com.hmdp.entity # 别名扫描包
+logging:
+  level:
+    com.hmdp: debug
+
+# 大模型配置
+wenxin:
+  api:
+    key: # API Key
+    secret-key:
+    base-url: https://aip.baidubce.com  # 国内用户可使用代理地址
+app:
+  id: 165be30729b44982920396b5311e45ac
+# 跨域配置
+cors:
+  allowed-origins: http://localhost:8080,http://localhost:5173
+  # 完全禁用所有安全
