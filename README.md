@@ -1,134 +1,143 @@
 # CollectorHub
 
-CollectorHub是一个基于Spring Boot的后端项目，主要功能包括用户管理、店铺管理、优惠券管理、秒杀功能、评论分析等。
+CollectorHub 是一个基于 Spring Boot 的综合性社区服务平台，集成了用户管理、店铺管理、博客系统、优惠券系统和 AI 分析等功能。
 
-## 项目功能
+## 技术栈
 
-### 核心功能
-- **用户管理**：用户注册、登录、个人信息管理
-- **店铺管理**：店铺信息查询、分类管理
-- **优惠券管理**：优惠券创建、发放、使用
-- **秒杀功能**：限时秒杀、库存管理
-- **评论分析**：基于AI的评论情感分析
-- **关注功能**：用户之间的关注关系管理
-- **博客系统**：用户发布博客、评论功能
+- **后端框架**: Spring Boot 3.0+
+- **持久层**: MyBatis-Plus
+- **数据库**: MySQL
+- **缓存**: Redis
+- **分布式锁**: Redisson
+- **AI 服务**: 文心一言 API
+- **前端**: 原生 JavaScript + HTML + CSS
 
-### 技术栈
+## 功能模块
 
-| 技术 | 版本 | 说明 |
-|------|------|------|
-| Spring Boot | 3.x | 应用框架 |
-| MyBatis-Plus | 3.x | ORM框架 |
-| Redis | 7.x | 缓存、分布式锁、限流 |
-| Redisson | 3.x | 分布式锁实现 |
-| MySQL | 8.x | 数据库 |
-| Spring Security | 6.x | 安全框架 |
-| Wenxin AI | - | 评论情感分析 |
+### 1. 用户管理
+- 用户注册、登录
+- 个人信息管理
+- 令牌刷新机制
+
+### 2. 店铺管理
+- 店铺信息查询
+- 店铺类型管理
+- 店铺缓存优化
+
+### 3. 博客系统
+- 博客发布、查询
+- 博客评论管理
+- 关注功能
+
+### 4. 优惠券系统
+- 优惠券管理
+- 秒杀优惠券
+- 订单管理
+
+### 5. AI 分析
+- 评论情感分析
+- 智能推荐
 
 ## 项目结构
 
 ```
 CollectorHub/
 ├── src/
-│   ├── main/
-│   │   ├── java/com/collectorhub/
-│   │   │   ├── config/          # 配置类
-│   │   │   ├── controller/      # 控制器
-│   │   │   ├── dto/             # 数据传输对象
-│   │   │   ├── entity/          # 实体类
-│   │   │   ├── mapper/          # MyBatis映射器
-│   │   │   ├── service/         # 业务逻辑
-│   │   │   ├── utils/           # 工具类
-│   │   │   └── CollectorHubApplication.java  # 应用启动类
-│   │   └── resources/
-│   │       ├── db/              # 数据库脚本
-│   │       ├── mapper/          # MyBatis XML映射文件
-│   │       ├── static/          # 静态资源
-│   │       ├── application.yml  # 应用配置
-│   │       └── *.lua            # Redis Lua脚本
-│   └── test/                    # 测试代码
-├── .gitignore                   # Git忽略文件
-├── pom.xml                      # Maven依赖管理
+│   └── main/
+│       ├── java/com/collectorhub/
+│       │   ├── config/          # 配置类
+│       │   ├── controller/      # 控制器
+│       │   ├── dto/             # 数据传输对象
+│       │   ├── entity/          # 实体类
+│       │   ├── mapper/          # MyBatis 映射
+│       │   ├── service/         # 业务逻辑
+│       │   ├── utils/           # 工具类
+│       │   └── CollectorHubApplication.java  # 应用入口
+│       └── resources/
+│           ├── db/              # 数据库脚本
+│           ├── mapper/          # MyBatis XML
+│           ├── static/          # 静态资源
+│           ├── application.yml  # 应用配置
+│           └── *.lua            # Redis Lua 脚本
+├── pom.xml                      # Maven 配置
 └── README.md                    # 项目说明
 ```
 
-## 快速开始
+## 核心功能
 
-### 环境要求
+### 1. 分布式ID生成
+使用 Redis 实现的分布式 ID 生成器，确保全局唯一 ID。
+
+### 2. 缓存优化
+- 店铺信息缓存
+- 热点数据缓存
+- 缓存更新策略
+
+### 3. 分布式锁
+使用 Redisson 实现的分布式锁，解决秒杀等高并发场景的线程安全问题。
+
+### 4. 秒杀系统
+基于 Redis + Lua 脚本实现的秒杀系统，确保高并发下的数据一致性。
+
+### 5. AI 评论分析
+集成文心一言 API，对用户评论进行情感分析。
+
+## 环境要求
+
 - JDK 17+
-- Maven 3.8+
+- Maven 3.6+
 - MySQL 8.0+
 - Redis 7.0+
 
-### 安装步骤
+## 安装与运行
 
-1. **克隆项目**
-   ```bash
-   git clone https://github.com/hyacinth123123/redis-.git
-   cd CollectorHub
-   ```
+### 1. 克隆项目
 
-2. **配置数据库**
-   - 创建数据库 `collectorhub`
-   - 执行 `src/main/resources/db/hmdp.sql` 初始化数据库结构
+```bash
+git clone https://github.com/hyacinth123123/redis-.git
+cd CollectorHub
+```
 
-3. **配置Redis**
-   - 确保Redis服务已启动
-   - 修改 `application.yml` 中的Redis连接配置
+### 2. 配置数据库
 
-4. **配置AI服务**
-   - 修改 `application.yml` 中的Wenxin AI配置
+1. 创建数据库：`CREATE DATABASE collectorhub DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+2. 导入数据库脚本：`src/main/resources/db/hmdp.sql`
+3. 修改数据库配置：`src/main/resources/application.yml`
 
-5. **构建项目**
-   ```bash
-   mvn clean package -DskipTests
-   ```
+### 3. 配置 Redis
 
-6. **运行项目**
-   ```bash
-   java -jar target/CollectorHub-1.0.0.jar
-   ```
+修改 Redis 配置：`src/main/resources/application.yml`
 
-## API文档
+### 4. 配置 AI 服务
 
-### 主要API端点
+修改文心一言 API 配置：`src/main/resources/application.yml`
 
-| 模块 | 路径 | 说明 | 方法 |
-|------|------|------|------|
-| 用户管理 | /user | 用户相关操作 | POST/GET |
-| 店铺管理 | /shop | 店铺相关操作 | POST/GET |
-| 优惠券管理 | /voucher | 优惠券相关操作 | POST/GET |
-| 秒杀功能 | /voucher-order/seckill | 秒杀接口 | POST |
-| 评论分析 | /ai/analyze | 评论情感分析 | POST |
-| 关注功能 | /follow | 关注相关操作 | POST/GET |
-| 博客系统 | /blog | 博客相关操作 | POST/GET |
+### 5. 构建与运行
 
-## 核心功能实现
+```bash
+# 构建项目
+mvn clean package
 
-### 秒杀功能
-- 使用Redis Lua脚本保证原子性
-- 采用分布式锁防止超卖
-- 异步处理订单创建
+# 运行项目
+java -jar target/CollectorHub-1.0.0.jar
+```
 
-### 评论分析
-- 集成Wenxin AI API
-- 实时情感分析
-- 结果缓存
+## 接口文档
 
-### 缓存策略
-- 店铺信息缓存
-- 优惠券缓存
-- 热点数据预热
+项目启动后，可通过 Swagger UI 查看接口文档：
 
-### 安全措施
-- JWT token认证
-- 密码加密存储
-- 接口限流
-
-## 贡献
-
-欢迎提交Issue和Pull Request！
+```
+http://localhost:8080/swagger-ui.html
+```
 
 ## 许可证
 
-本项目采用MIT许可证。
+本项目采用 MIT 许可证。
+
+## 贡献
+
+欢迎提交 Issue 和 Pull Request！
+
+---
+
+**注意**：本项目仅供学习和参考使用，生产环境部署需进行安全加固。
