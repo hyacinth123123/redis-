@@ -76,3 +76,18 @@ CollectorHub/
 - 社交场景存储优化
 - AI交互体验提升
 - 分布式一致性保障
+
+## 贡献指南
+1. Fork本项目
+2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 打开Pull Request
+
+## 许可证
+本项目采用MIT许可证 - 详见LICENSE文件
+
+## 联系方式
+- 项目维护者：[Your Name]
+- 邮箱：[your.email@example.com]
+- GitHub：[your-github-username]
